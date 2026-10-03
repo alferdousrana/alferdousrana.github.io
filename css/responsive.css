@@ -56,6 +56,7 @@
   .section__desc { justify-self: start; }
 
   .about__grid { grid-template-columns: 1fr; }
+  .about__side { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); align-items: start; }
   .dna__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .timeline__detail { grid-template-columns: 1fr; }
   .repos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -105,6 +106,9 @@
   .project__meta { max-height: 3em; opacity: 1; }
   .repos { grid-template-columns: 1fr; }
   .awards { grid-template-columns: 1fr; }
+  .about__side { grid-template-columns: 1fr; }
+  .portrait { max-width: 320px; }
+  .lightbox__btn--prev, .lightbox__btn--next { top: auto; bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); transform: none; }
   .award { min-height: 0; }
   .edu { flex-direction: column; align-items: flex-start; }
   .edu__gauge { width: 72px; height: 72px; }

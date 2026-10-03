@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#070A10">
+  <title>Admin · Md. Al Ferdous</title>
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <script defer src="js/data.js"></script>
+  <script defer src="js/utils.js"></script>
+  <script defer src="js/admin.js"></script>
+</head>
+<body class="admin">
+  <!-- connect screen -->
+  <main class="connect" data-connect>
+    <div class="connect__card panel">
+      <p class="mono connect__brand"><span class="nav__mark" aria-hidden="true"></span> al.ferdous / admin</p>
+      <h1 class="connect__title">Edit your portfolio</h1>
+      <p class="connect__text">Changes are saved straight to your GitHub repository — no database. Your token stays in this browser and is only sent to GitHub.</p>
+
+      <form class="connect__form" data-connect-form autocomplete="off">
+        <label class="field">
+          <span class="field__label">GitHub token</span>
+          <input type="password" name="token" required spellcheck="false" placeholder="github_pat_…" autocomplete="off">
+          <span class="field__hint">Create a <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">fine-grained token</a>: repository access → only your site repo, permission <b>Contents: Read and write</b>.</span>
+        </label>
+        <div class="field-row">
+          <label class="field"><span class="field__label">Owner</span><input name="owner" required value="alferdousrana" spellcheck="false"></label>
+          <label class="field"><span class="field__label">Repository</span><input name="repo" required value="alferdousrana.github.io" spellcheck="false"></label>
+          <label class="field"><span class="field__label">Branch</span><input name="branch" required value="main" spellcheck="false"></label>
+        </div>
+        <label class="check"><input type="checkbox" name="remember"> <span>Remember on this device</span></label>
+        <p class="connect__error" data-connect-error role="alert" hidden></p>
+        <div class="connect__actions">
+          <button type="submit" class="btn btn--primary" data-connect-submit>Connect</button>
+          <button type="button" class="btn btn--ghost" data-offline>Work offline</button>
+        </div>
+        <p class="field__hint">Offline mode edits the published content and lets you download <code>data.js</code> to upload yourself.</p>
+      </form>
+    </div>
+  </main>
+
+  <!-- editor -->
+  <div class="editor" data-editor hidden>
+    <header class="topbar">
+      <a class="topbar__brand mono" href="index.html" target="_blank" rel="noopener"><span class="nav__mark" aria-hidden="true"></span> admin</a>
+      <span class="topbar__repo mono" data-repo-label></span>
+      <span class="topbar__dirty mono" data-dirty hidden>● unpublished changes</span>
+      <div class="topbar__actions">
+        <button type="button" class="btn btn--ghost btn--sm" data-preview>Preview</button>
+        <button type="button" class="btn btn--ghost btn--sm" data-download>Download data.js</button>
+        <button type="button" class="btn btn--primary btn--sm" data-publish>Publish</button>
+        <button type="button" class="btn btn--ghost btn--sm" data-disconnect>Sign out</button>
+      </div>
+    </header>
+    <nav class="sidebar" aria-label="Content sections" data-sidebar></nav>
+    <main class="workspace" data-workspace tabindex="-1"></main>
+  </div>
+
+  <div class="toast" role="status" aria-live="polite" data-toast></div>
+</body>
+</html>

@@ -57,7 +57,7 @@
     /* ---------- command table ---------- */
     buildCommands() {
       const d = this.data;
-      const sections = ['home', 'about', 'systems', 'experience', 'projects', 'skills', 'recognition', 'lab', 'break', 'contact'];
+      const sections = ['home', 'about', 'systems', 'experience', 'projects', 'skills', 'recognition', 'gallery', 'lab', 'break', 'contact'];
       const link = (href, text) => AF.util.extLink(href, text);
 
       return {
@@ -71,22 +71,15 @@
         whoami: { desc: 'who runs this system', run: () => this.lines([d.person.name, `${d.person.role} — ${d.person.stack}`], 'out-accent') },
         about: {
           desc: 'short profile',
-          run: () => this.lines([
-            'Backend developer specializing in Python and Django.',
-            'Led backend for a healthcare platform serving 10,000+ users (Dhaka Cast Limited, 2019–2025).',
-            'Built Django REST APIs for 2 production client projects at Softvence (2026).',
-            'Built a reusable auth package with OTP + JWT, published on PyPI.'
-          ])
+          run: () => this.lines([d.about.lede || d.person.tagline || '', '', 'Try: experience, projects, stack, contact'].filter((l, i) => l || i === 1))
         },
         stack: {
           desc: 'core technologies',
-          run: () => this.lines([
-            'backend       Python, Django, Django REST Framework',
-            'api & auth    REST APIs, JWT, OTP verification',
-            'database      PostgreSQL, MySQL',
-            'architecture  Modular design, MVC/MVT, scalable systems',
-            'tools         Git, GitHub, Postman'
-          ])
+          run: () => {
+            const groups = {};
+            d.skills.nodes.forEach((n) => { (groups[n.group || 'other'] = groups[n.group || 'other'] || []).push(n.label); });
+            this.lines(Object.entries(groups).map(([g, l]) => `${g.padEnd(14, ' ')}${l.join(', ')}`));
+          }
         },
         skills: { desc: 'alias for stack', hidden: true, run: () => this.commands.stack.run() },
         projects: {
@@ -112,14 +105,13 @@
         },
         awards: {
           desc: 'recognition',
-          run: () => this.lines([
-            'Digital Bangladesh Award 2021 — Best Team (ICT Division, National)',
-            'IdeaTHON Top 30 — ICT Division & Korea Productivity Center',
-            'Call for Nation — Honorable Mention'
-          ])
+          run: () => this.lines(d.awards.length ? d.awards.map((a) => [a.name, a.honour].filter(Boolean).join(' — ') + (a.issuer ? ` (${a.issuer})` : '') + (a.top && !/^\d{4}$/.test(a.top) ? ` · ${a.top}` : '')) : ['(none)'])
         },
-        education: { desc: 'degree', run: () => this.lines(['B.Sc. in Computer Science & Engineering', 'Global University Bangladesh · CGPA 3.67 / 4.00']) },
-        mission: { desc: 'what this is for', run: () => this.lines(['Build scalable systems that turn complex problems into reliable software.'], 'out-accent') },
+        education: {
+          desc: 'degree',
+          run: () => this.lines(d.education.flatMap((e) => [e.degree, [e.school, e.cgpa ? `CGPA ${e.cgpa} / ${e.scale || '4.00'}` : ''].filter(Boolean).join(' · ')]))
+        },
+        mission: { desc: 'what this is for', run: () => this.lines([d.person.tagline || 'Build reliable systems.'], 'out-accent') },
         status: {
           desc: 'system status',
           run: () => this.lines(d.person.available ? ['ONLINE · available for opportunities'] : ['ONLINE'], 'out-ok')
@@ -129,8 +121,8 @@
           run: () => {
             this.print([
               ['', 'email     '], link(`mailto:${d.person.email}`, d.person.email), ['', '\n'],
-              ['', 'github    '], link(d.person.github, 'github.com/alferdousrana'), ['', '\n'],
-              ['', 'linkedin  '], link(d.person.linkedin, 'linkedin.com/in/al-ferdous-rana'), ['', '\n'],
+              ['', 'github    '], link(d.person.github, d.person.github.replace(/^https?:\/\/(www\.)?/, '')), ['', '\n'],
+              ['', 'linkedin  '], link(d.person.linkedin, d.person.linkedin.replace(/^https?:\/\/(www\.)?/, '')), ['', '\n'],
               ['out-muted', 'run "email" to copy the address']
             ]);
           }
@@ -151,7 +143,7 @@
           desc: 'cd <section> — jump to a section',
           run: (args) => {
             const target = (args[0] || '').replace(/^[~/.]+/, '');
-            if (!sections.includes(target)) { this.lines([`cd: no such section: ${target || '(empty)'}`, `try: ${sections.join(' ')}`], 'out-err'); return; }
+            if (!sections.includes(target) || document.getElementById(target)?.hidden) { this.lines([`cd: no such section: ${target || '(empty)'}`, `try: ${sections.join(' ')}`], 'out-err'); return; }
             document.getElementById(target)?.scrollIntoView({ behavior: AF.util.reducedMotion() ? 'auto' : 'smooth' });
             this.lines([`→ ~/${target}`], 'out-ok');
           }
