@@ -57,6 +57,8 @@
 
   <script defer src="js/data.js"></script>
   <script defer src="js/utils.js"></script>
+  <script defer src="js/content.js"></script>
+  <script defer src="js/render.js"></script>
   <script defer src="js/animations.js"></script>
   <script defer src="js/lab.js"></script>
   <script defer src="js/terminal.js"></script>
@@ -84,6 +86,7 @@
           <li><a href="#experience">experience</a></li>
           <li><a href="#projects">projects</a></li>
           <li><a href="#skills">skills</a></li>
+          <li data-nav-for="gallery"><a href="#gallery">gallery</a></li>
           <li><a href="#lab">lab</a></li>
           <li><a href="#contact">contact</a></li>
         </ul>
@@ -101,13 +104,13 @@
     <section class="hero" id="home" aria-labelledby="hero-title">
       <div class="hero__copy">
         <p class="hero__boot-state mono" data-boot-state><span class="dot dot--pulse" aria-hidden="true"></span><span data-boot-label>initializing…</span></p>
-        <h1 class="hero__title" id="hero-title">
+        <h1 class="hero__title" id="hero-title" data-hero-name>
           <span class="hero__title-line">Md. Al</span>
           <span class="hero__title-line">Ferdous</span>
         </h1>
-        <p class="hero__role">Backend Developer</p>
-        <p class="hero__stack mono">Python <i>•</i> Django <i>•</i> REST APIs <i>•</i> Scalable Systems</p>
-        <p class="hero__lead">Building systems that turn complex problems into reliable software.</p>
+        <p class="hero__role" data-hero-role>Backend Developer</p>
+        <p class="hero__stack mono" data-hero-stack>Python <i>•</i> Django <i>•</i> REST APIs <i>•</i> Scalable Systems</p>
+        <p class="hero__lead" data-hero-tagline>Building systems that turn complex problems into reliable software.</p>
         <div class="hero__actions">
           <a class="btn btn--primary" href="#projects" data-magnetic>See the systems</a>
           <a class="btn btn--ghost" href="#terminal" data-open-terminal data-magnetic>Open the terminal</a>
@@ -131,7 +134,7 @@
         </ul>
       </div>
 
-      <dl class="hero__facts">
+      <dl class="hero__facts" data-hero-facts>
         <div><dt class="mono">led</dt><dd>Backend for a healthcare platform serving 10,000+ users</dd></div>
         <div><dt class="mono">shipped</dt><dd>Django REST APIs for 2 production client projects</dd></div>
         <div><dt class="mono">published</dt><dd><code>alfer-django-authx</code> — a reusable auth package on PyPI</dd></div>
@@ -142,10 +145,19 @@
     <section class="section about" id="about" aria-labelledby="about-title">
       <header class="section__head">
         <p class="section__path mono"><span>01</span> ~/profile</p>
-        <h2 class="section__title" id="about-title">Who is running this system</h2>
+        <h2 class="section__title" id="about-title" data-about-title>Who is running this system</h2>
       </header>
 
       <div class="about__grid">
+        <div class="about__side">
+        <figure class="portrait" data-photo hidden>
+          <div class="portrait__frame">
+            <img data-photo-img src="" alt="" width="900" height="924" loading="lazy" decoding="async">
+            <span class="portrait__corner portrait__corner--tl" aria-hidden="true"></span>
+            <span class="portrait__corner portrait__corner--br" aria-hidden="true"></span>
+          </div>
+          <figcaption class="mono" data-photo-caption></figcaption>
+        </figure>
         <div class="profile panel" data-reveal>
           <div class="panel__bar mono">
             <span class="panel__dots" aria-hidden="true"><i></i><i></i><i></i></span>
@@ -160,12 +172,15 @@
             <strong>Available for opportunities</strong>
           </div>
         </div>
+        </div>
 
         <div class="about__story" data-reveal>
-          <p class="about__lede">I design backend systems where authentication, data flow, API contracts and scalability are treated as first-class concerns — not things bolted on after launch.</p>
+          <div class="about__text" data-about-text>
+            <p class="about__lede">I design backend systems where authentication, data flow, API contracts and scalability are treated as first-class concerns — not things bolted on after launch.</p>
           <p>From December 2019 to July 2025 I was Backend Lead Engineer at Dhaka Cast Limited, leading the backend for a healthcare platform with a multi-role architecture serving more than 10,000 users. That meant a secure JWT + OTP authentication system, REST APIs built for performance, and database queries tuned so the platform stayed reliable as its user base grew.</p>
           <p>At Softvence, from January to May 2026, I built and deployed Django REST APIs for two production client projects — designing their authentication, database schemas and third-party integrations.</p>
           <p>The patterns I kept rebuilding, I turned into reusable code: an authentication package with OTP and JWT, and a modular DRF backend organised around services and selectors.</p>
+          </div>
 
           <div class="metrics" data-metrics>
             <div class="metric">
@@ -263,7 +278,7 @@
         <p class="section__path mono"><span>06</span> ~/recognition</p>
         <h2 class="section__title" id="rec-title">Recognition &amp; foundations</h2>
       </header>
-      <div class="awards">
+      <div class="awards" data-awards>
         <article class="award award--lead" data-reveal>
           <p class="award__year">2021</p>
           <h3 class="award__name">Digital Bangladesh Award</h3>
@@ -282,6 +297,7 @@
       </div>
 
       <div class="foundations">
+        <div class="edu-list" data-education>
         <article class="edu panel" data-reveal>
           <svg class="edu__gauge" viewBox="0 0 120 120" aria-hidden="true">
             <circle cx="60" cy="60" r="50" class="edu__gauge-track"/>
@@ -294,14 +310,25 @@
             <p class="edu__cgpa"><strong>3.67</strong> <span class="mono">/ 4.00 CGPA</span></p>
           </div>
         </article>
+        </div>
         <article class="certs panel" data-reveal>
           <p class="mono edu__label">certifications</p>
-          <ul>
+          <ul data-certs>
             <li><span>Full Stack Web Development with Python, Django &amp; React</span><span class="mono">Ostad · 2025</span></li>
             <li><span>Kotlin &amp; Android Jetpack Compose</span><span class="mono">Udemy · 2022</span></li>
           </ul>
         </article>
       </div>
+    </section>
+
+    <!-- ============ GALLERY ============ -->
+    <section class="section gallery" id="gallery" aria-labelledby="gallery-title" hidden>
+      <header class="section__head">
+        <p class="section__path mono"><span>07</span> ~/gallery</p>
+        <h2 class="section__title" id="gallery-title" data-gallery-title>Gallery</h2>
+        <p class="section__desc" data-gallery-text></p>
+      </header>
+      <ul class="gallery__grid" data-gallery></ul>
     </section>
 
     <!-- ============ SCENE 07 · LAB ============ -->
@@ -407,11 +434,11 @@
     <!-- ============ SCENE 09 · CONTACT ============ -->
     <section class="section contact" id="contact" aria-labelledby="contact-title">
       <p class="section__path mono"><span>09</span> ~/contact</p>
-      <h2 class="contact__title" id="contact-title">Have a system worth building?</h2>
-      <p class="contact__text">A project, an opportunity, or an interesting engineering problem — let's talk.</p>
-      <a class="btn btn--primary btn--large" href="mailto:alferdous13@gmail.com?subject=Let%27s%20build%20something" data-magnetic>Let's build it <span aria-hidden="true">→</span></a>
+      <h2 class="contact__title" id="contact-title" data-contact-title>Have a system worth building?</h2>
+      <p class="contact__text" data-contact-text>A project, an opportunity, or an interesting engineering problem — let's talk.</p>
+      <a class="btn btn--primary btn--large" href="mailto:alferdous13@gmail.com?subject=Let%27s%20build%20something" data-magnetic data-contact-button><span data-contact-button-text>Let's build it</span> <span aria-hidden="true">→</span></a>
 
-      <div class="contact__card panel" data-reveal>
+      <div class="contact__card panel" data-reveal data-contact-card>
         <div class="contact__row contact__row--email">
           <span class="mono">email</span>
           <a href="mailto:alferdous13@gmail.com">alferdous13@gmail.com</a>
@@ -441,18 +468,18 @@
   <footer class="footer">
     <div class="footer__inner">
       <div>
-        <p class="footer__name">Md. Al Ferdous</p>
-        <p class="footer__role">Backend Developer</p>
-        <p class="footer__stack mono">Python • Django • REST APIs • Scalable Systems</p>
+        <p class="footer__name" data-footer-name>Md. Al Ferdous</p>
+        <p class="footer__role" data-footer-role>Backend Developer</p>
+        <p class="footer__stack mono" data-footer-stack>Python • Django • REST APIs • Scalable Systems</p>
       </div>
-      <ul class="footer__links">
+      <ul class="footer__links" data-footer-links>
         <li><a href="https://github.com/alferdousrana" target="_blank" rel="noopener noreferrer">GitHub</a></li>
         <li><a href="https://www.linkedin.com/in/al-ferdous-rana/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
         <li><a href="https://www.facebook.com/alferdous.rana" target="_blank" rel="noopener noreferrer">Facebook</a></li>
       </ul>
       <div class="footer__meta mono">
         <p>Built with HTML • CSS • JavaScript — no frameworks</p>
-        <p>© <span data-year>2026</span> Md. Al Ferdous</p>
+        <p>© <span data-year>2026</span> <span data-footer-copy>Md. Al Ferdous</span></p>
         <p class="footer__keys">shortcuts: <kbd>/</kbd> terminal · <kbd>esc</kbd> close</p>
       </div>
     </div>
@@ -475,7 +502,10 @@
         </div>
       </header>
       <div class="case__body">
-        <div class="case__sections" data-case-sections></div>
+        <div class="case__sections">
+          <img class="case__cover" data-case-cover alt="" hidden>
+          <div class="case__sections-list" data-case-sections></div>
+        </div>
         <figure class="case__diagram">
           <figcaption class="mono">architecture trace</figcaption>
           <div class="arch" data-case-diagram></div>
@@ -484,6 +514,19 @@
     </div>
   </dialog>
 
+  <!-- ============ GALLERY LIGHTBOX ============ -->
+  <dialog class="lightbox" data-lightbox aria-label="Image viewer">
+    <figure class="lightbox__figure">
+      <img data-lightbox-img alt="">
+      <figcaption data-lightbox-caption></figcaption>
+    </figure>
+    <button type="button" class="lightbox__btn lightbox__btn--prev" data-lightbox-prev aria-label="Previous image">←</button>
+    <button type="button" class="lightbox__btn lightbox__btn--next" data-lightbox-next aria-label="Next image">→</button>
+    <button type="button" class="lightbox__btn lightbox__btn--close" data-lightbox-close aria-label="Close image viewer">✕</button>
+    <p class="lightbox__count mono" data-lightbox-count></p>
+  </dialog>
+
+  <div class="preview-bar mono" data-preview-bar hidden>preview · unpublished changes from the admin panel</div>
   <div class="toast" role="status" aria-live="polite" data-toast></div>
 </body>
 </html>

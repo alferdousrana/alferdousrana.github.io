@@ -102,25 +102,30 @@
   /* =========================================================
      EXPERIENCE TIMELINE
      ========================================================= */
-  function monthIndex(ym) { const [y, m] = ym.split('-').map(Number); return y * 12 + (m - 1); }
+  const SIGNALS = [
+    { id: 'api', label: 'API' }, { id: 'database', label: 'Database' }, { id: 'auth', label: 'Auth' },
+    { id: 'architecture', label: 'Architecture' }, { id: 'deployment', label: 'Deployment' }
+  ];
+  const mi = (d) => d.y * 12 + d.m;
 
   function renderTimeline() {
     const track = $('[data-timeline-track]');
     const detail = $('[data-timeline-detail]');
-    if (!track) return;
-    const start = monthIndex('2019-07');
-    const end = monthIndex('2026-08');
-    const span = end - start;
-    const pct = (ym) => ((monthIndex(ym) - start) / span) * 100;
+    if (!track || !D.experience.length) return;
+    const sorted = D.experience.slice().sort((a, b) => mi(a._s) - mi(b._s));
+    const start = Math.min(...sorted.map((x) => mi(x._s))) - 5;
+    const end = Math.max(...sorted.map((x) => mi(x._e))) + 3;
+    const span = Math.max(end - start, 1);
+    const pct = (m) => ((m - start) / span) * 100;
 
     track.append(el('div', { class: 'timeline__axis', 'aria-hidden': 'true' }));
-    for (let y = 2020; y <= 2026; y++) {
-      track.append(el('span', { class: 'timeline__year', style: `left:${pct(`${y}-01`)}%`, 'aria-hidden': 'true' }, [String(y)]));
+    const y0 = Math.floor(start / 12) + 1; const y1 = Math.floor(end / 12);
+    const step = y1 - y0 > 9 ? 2 : 1;
+    for (let y = y0; y <= y1; y += step) {
+      track.append(el('span', { class: 'timeline__year', style: `left:${pct(y * 12)}%`, 'aria-hidden': 'true' }, [String(y)]));
     }
-    // honest gap between roles
-    const sorted = D.experience.slice().sort((a, b) => monthIndex(a.start) - monthIndex(b.start));
     for (let i = 0; i < sorted.length - 1; i++) {
-      const gs = pct(sorted[i].end); const ge = pct(sorted[i + 1].start);
+      const gs = pct(mi(sorted[i]._e) + 1); const ge = pct(mi(sorted[i + 1]._s));
       if (ge - gs > 1) track.append(el('span', { class: 'timeline__gap', style: `left:${gs}%;width:${ge - gs}%`, title: 'Between roles', 'aria-hidden': 'true' }));
     }
 
@@ -136,13 +141,13 @@
     };
 
     sorted.forEach((exp) => {
-      const left = pct(exp.start);
-      const width = pct(exp.end) - left;
-      const nearEnd = left > 70;
+      const left = pct(mi(exp._s));
+      const width = Math.max(pct(mi(exp._e) + 1) - left, 2);
+      const nearEnd = left > 60;
       const btn = el('button', {
         type: 'button', role: 'tab', id: `tab-${exp.id}`, 'aria-controls': 'xp-detail',
         class: `timeline__seg${nearEnd ? ' timeline__seg--end' : ''}`,
-        style: nearEnd ? `right:${100 - left - width}%;width:${width}%` : `left:${left}%;width:${width}%`,
+        style: nearEnd ? `right:${Math.max(100 - left - width, 0)}%;width:${width}%` : `left:${left}%;width:${width}%`,
         dataset: { exp: exp.id }
       }, [
         el('span', { class: 'timeline__seg-label' }, [exp.company]),
@@ -166,7 +171,7 @@
   function renderExperienceDetail(box, exp) {
     box.setAttribute('aria-labelledby', `tab-${exp.id}`);
     const links = exp.links.length
-      ? el('div', { class: 'xp__links' }, [el('span', { class: 'mono', style: 'color:var(--muted)' }, ['projects:']), ...exp.links.map((l) => AF.util.extLink(l.url, l.label))])
+      ? el('div', { class: 'xp__links' }, [el('span', { class: 'mono', style: 'color:var(--muted)' }, ['projects:']), ...exp.links.filter((l) => l.url).map((l) => AF.util.extLink(l.url, l.label || l.url))])
       : null;
     box.replaceChildren(
       el('div', {}, [
@@ -179,7 +184,7 @@
       el('div', { class: 'xp__side' }, [
         el('div', {}, [
           el('p', { class: 'xp__side-label' }, ['system signals']),
-          el('ul', { class: 'signals' }, D.signals.map((s) => el('li', { class: `signal${exp.signals.includes(s.id) ? ' is-on' : ''}` }, [el('i', { 'aria-hidden': 'true' }), s.label])))
+          el('ul', { class: 'signals' }, SIGNALS.map((s) => el('li', { class: `signal${exp.signals.includes(s.id) ? ' is-on' : ''}` }, [el('i', { 'aria-hidden': 'true' }), s.label])))
         ]),
         el('div', {}, [
           el('p', { class: 'xp__side-label' }, ['stack']),
@@ -222,7 +227,7 @@
         el('div', { class: 'project__side' }, [
           el('div', {}, [el('p', { class: 'project__label' }, ['what I built']), el('p', { class: 'project__built' }, [p.built])]),
           el('div', {}, [el('p', { class: 'project__label' }, ['key engineering features']), el('ul', { class: 'project__features' }, p.features.map((f) => el('li', {}, [f])))]),
-          el('div', { class: 'project__actions' }, [openBtn, ...p.links.map(linkPill)])
+          el('div', { class: 'project__actions' }, [openBtn, ...p.links.filter((l) => l.url).map(linkPill)])
         ])
       ]);
       openBtn.addEventListener('click', (e) => { e.stopPropagation(); openCase(p.id, openBtn); });
@@ -250,7 +255,11 @@
     $('[data-case-type]', dialog).textContent = p.type;
     $('[data-case-title]', dialog).textContent = p.name;
     $('[data-case-stack]', dialog).replaceChildren(...p.stack.map((s) => el('li', {}, [s])));
-    $('[data-case-links]', dialog).replaceChildren(...p.links.map(linkPill));
+    $('[data-case-links]', dialog).replaceChildren(...p.links.filter((l) => l.url).map(linkPill));
+    const cover = $('[data-case-cover]', dialog);
+    const coverSrc = AF.img(p.image);
+    cover.hidden = !coverSrc;
+    if (coverSrc) { cover.src = coverSrc; cover.alt = `${p.name} screenshot`; } else cover.removeAttribute('src');
 
     const sections = p.case.map((c) => el('section', { class: 'case__section' }, [el('h3', {}, [c.h.toLowerCase()]), el('p', {}, [c.p])]));
     sections.splice(1, 0, el('section', { class: 'case__section' }, [el('h3', {}, ['key features']), el('ul', {}, p.features.map((f) => el('li', {}, [f])))]));
@@ -332,7 +341,7 @@
           el('span', { class: 'repo__desc' }, [r.description || 'No description yet.']),
           el('span', { class: 'repo__meta' }, [
             r.language ? el('span', { class: 'repo__lang', style: `--lang:${LANG_COLORS[r.language] || '#7d8aa0'}` }, [r.language]) : null,
-            el('span', {}, [`★ ${r.stars}`])
+            el('span', {}, [`★ ${r.stars || 0}`])
           ])
         );
         return a;
@@ -419,8 +428,11 @@
     // core node
     const core = svg('g', { class: 'c-node c-core', transform: `translate(${cx} ${cy})` });
     core.append(svg('circle', { r: narrow ? 50 : 62 }));
-    core.append(svg('text', { 'text-anchor': 'middle', y: -4, text: 'Backend' }));
-    core.append(svg('text', { 'text-anchor': 'middle', y: 15, text: 'engineering' }));
+    const centre = (D.skills.center.label || 'Backend engineering').trim().split(/\s+/);
+    const line1 = centre.length > 1 ? centre.slice(0, Math.ceil(centre.length / 2)).join(' ') : centre[0];
+    const line2 = centre.length > 1 ? centre.slice(Math.ceil(centre.length / 2)).join(' ') : '';
+    core.append(svg('text', { 'text-anchor': 'middle', y: line2 ? -4 : 5, text: line1 }));
+    if (line2) core.append(svg('text', { 'text-anchor': 'middle', y: 15, text: line2 }));
     nodeLayer.append(core);
 
     const groups = {};
@@ -449,7 +461,8 @@
     });
     root.addEventListener('pointerleave', reset);
 
-    const defaultInfo = { group: 'backend engineering', label: 'The core', text: info ? $('.constellation__text', info).textContent : '' };
+    const defaultInfo = { group: (D.skills.center.label || 'backend engineering').toLowerCase(), label: 'The core', text: D.skills.center.text || '' };
+    setInfo(defaultInfo.group, defaultInfo.label, defaultInfo.text);
 
     function setInfo(group, label, text) {
       if (!info) return;
@@ -651,11 +664,13 @@
      ========================================================= */
   function init() {
     document.documentElement.classList.remove('no-js');
+    AF.render.all();
     renderProfile();
     renderDNA();
     renderTimeline();
     renderProjects();
     renderConstellation();
+    AF.render.sections();
     initCase();
     initNav();
     initPointerFX();

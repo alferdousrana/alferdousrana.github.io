@@ -39,6 +39,12 @@ window.AF = window.AF || {};
       return node;
     },
 
+    /** replaceChildren that skips null/false (replaceChildren would print them as text). */
+    fill(node, ...kids) {
+      node.replaceChildren(...kids.filter((k) => k !== null && k !== undefined && k !== false));
+      return node;
+    },
+
     svg(tag, attrs = {}) {
       const node = document.createElementNS('http://www.w3.org/2000/svg', tag);
       for (const [k, v] of Object.entries(attrs)) {
@@ -50,7 +56,7 @@ window.AF = window.AF || {};
 
     /** Safe external link with noopener. */
     extLink(href, text, cls) {
-      return util.el('a', { href, class: cls, target: '_blank', rel: 'noopener noreferrer' }, [text]);
+      return util.el('a', { href: AF.safeUrl ? AF.safeUrl(href) : href, class: cls, target: '_blank', rel: 'noopener noreferrer' }, [text]);
     },
 
     toast(message, isError = false) {

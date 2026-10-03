@@ -447,12 +447,10 @@
   }
 
   function initGauge() {
-    const fill = $('[data-gauge]');
-    if (!fill) return;
     const C = 2 * Math.PI * 50;
-    onVisible(fill.closest('.edu'), () => {
+    $$('[data-gauge]').forEach((fill) => onVisible(fill.closest('.edu'), () => {
       fill.style.strokeDashoffset = String(C * (1 - Number(fill.dataset.gauge)));
-    });
+    }));
   }
 
   AF.anim = {
